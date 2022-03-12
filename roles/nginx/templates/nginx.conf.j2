@@ -1,0 +1,16 @@
+
+server {
+    listen {{ nginx_port_crt }} ssl;
+    root /usr/share/nginx/html;
+    index index.html index.htm;
+    server_name {{ inventory_hostname }};
+    ssl_certificate /etc/ssl/crt/{{ inventory_hostname }}.crt;
+    ssl_certificate_key /etc/ssl/private/{{ inventory_hostname }}_priv.pem;
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+    access_log /var/log/nginx/{{ inventory_hostname }}.access.log;
+    error_log /var/log/nginx/{{ inventory_hostname }}.error.log;
+    location / {
+            try_files $uri $uri/ =404;
+    }
+}

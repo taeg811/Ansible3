@@ -1,0 +1,33 @@
+---
+- name: play with roles
+  hosts: web
+  become: false
+
+  pre_tasks:
+    - name: using roles
+      debug:
+        msg: "roles start"
+  roles:
+    - role: cert
+      tags: cert
+    - role: nginx
+      become: true
+      tags: ng
+    - role: mariadb
+      become: true
+      tags: db
+  tasks:
+    - name: check web site from control server
+      uri:
+        url: "https://{{ inventory_hostname }}:{{ nginx_port_crt }}"
+        return_content: true
+        validate_certs: false
+      # connection: local
+      register: example_webpage_out
+      failed_when: example_webpage_out.status != 200
+    
+  post_tasks:
+    - name: tasks were done
+      debug:
+        msg: " tasks were done"
+    
